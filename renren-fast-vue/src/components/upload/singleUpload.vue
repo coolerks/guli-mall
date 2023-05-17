@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-upload
-      action="http://gulimall.oss-cn-shanghai.aliyuncs.com"
+      action="http://gulimall-gulimall-gulimall-gulimall-gulimall.oss-cn-beijing.aliyuncs.com"
       :data="dataObj"
       list-type="picture"
       :multiple="false" :show-file-list="showFileList"
@@ -98,7 +98,7 @@ export default {
       this.fileList.pop();
       this.fileList.push({
         name: file.name,
-        url: this.dataObj.host + '/' + this.dataObj.key.replace("${filename}", file.name)
+        url: "http://" + this.dataObj.host + '/' + this.dataObj.key.replace("${filename}", file.name)
       });
       this.emitInput(this.fileList[0].url);
     }
