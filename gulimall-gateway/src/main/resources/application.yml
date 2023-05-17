@@ -1,0 +1,38 @@
+server:
+  port: 88
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: product_route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+        - id: admin_route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /renren-fast/$\{segment}
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins:
+              - http://localhost:8001
+              - http://localhost:8002
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTION
+            allowed-headers: "*"
+            allow-credentials: true
+
+  application:
+    name: gulimall-gateway
