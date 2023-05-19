@@ -60,12 +60,17 @@ public class CategoryController {
         return R.ok();
     }
 
+    @RequestMapping("/test2")
+    public R test() {
+        return R.ok().put("data", "成功00000");
+    }
+
     /**
      * 修改
      */
     @RequestMapping("/update")
     public R update(@RequestBody CategoryEntity category) {
-        categoryService.updateById(category);
+        categoryService.updateCascade(category);
 
         return R.ok();
     }
