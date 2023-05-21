@@ -1,10 +1,14 @@
 package top.integer.gulimall.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,9 +16,13 @@ import org.w3c.dom.Attr;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.Query;
 
+import top.integer.gulimall.product.dao.AttrAttrgroupRelationDao;
 import top.integer.gulimall.product.dao.AttrGroupDao;
+import top.integer.gulimall.product.entity.AttrAttrgroupRelationEntity;
+import top.integer.gulimall.product.entity.AttrEntity;
 import top.integer.gulimall.product.entity.AttrGroupEntity;
 import top.integer.gulimall.product.service.AttrGroupService;
+import top.integer.gulimall.product.service.AttrService;
 import top.integer.gulimall.product.service.CategoryService;
 
 
@@ -23,6 +31,8 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Autowired
     private CategoryService categoryService;
+
+
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

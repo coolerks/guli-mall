@@ -10,6 +10,7 @@ import top.integer.gulimall.product.entity.AttrEntity;
 import top.integer.gulimall.product.service.AttrService;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.R;
+import top.integer.gulimall.product.vo.AttrRespVo;
 import top.integer.gulimall.product.vo.AttrVo;
 
 
@@ -36,10 +37,10 @@ public class AttrController {
         return R.ok().put("page", page);
     }
 
-    @GetMapping("/base/list/{catelogId}")
+    @GetMapping("/{type}/list/{catelogId}")
     public R baseAttrList(@RequestParam Map<String, Object> params,
-                          @PathVariable Long catelogId) {
-        PageUtils page = attrService.queryBaseAttrPage(params, catelogId);
+                          @PathVariable Long catelogId, @PathVariable String type) {
+        PageUtils page = attrService.queryBaseAttrPage(params, catelogId, type);
         return R.ok().put("page", page);
     }
 
@@ -48,7 +49,7 @@ public class AttrController {
      */
     @RequestMapping("/info/{attrId}")
     public R info(@PathVariable("attrId") Long attrId){
-		AttrEntity attr = attrService.getById(attrId);
+		AttrRespVo attr = attrService.getAttrInfo(attrId);
 
         return R.ok().put("attr", attr);
     }
@@ -67,8 +68,8 @@ public class AttrController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody AttrEntity attr){
-		attrService.updateById(attr);
+    public R update(@RequestBody AttrVo attr){
+		attrService.updateAttr(attr);
 
         return R.ok();
     }
