@@ -3,6 +3,7 @@ package top.integer.gulimall.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import top.integer.gulimall.product.entity.AttrGroupEntity;
 import top.integer.gulimall.product.service.AttrGroupService;
 import top.integer.gulimall.product.service.AttrService;
 import top.integer.gulimall.product.service.CategoryService;
+import top.integer.gulimall.product.vo.AttrGroupWithAttrsVo;
 
 
 @Service("attrGroupService")
@@ -31,6 +33,9 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private AttrService attrService;
 
 
 
@@ -63,6 +68,20 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         AttrGroupEntity attrGroup = this.getById(attrGroupId);
         attrGroup.setCatelogPath(categoryService.getCatelogPath(attrGroup.getCatelogId()));
         return attrGroup;
+    }
+
+    @Override
+    public List<AttrGroupWithAttrsVo> getAttrGroupWithAttrsByCatelogId(Long catelogId) {
+        LambdaQueryWrapper<AttrGroupEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AttrGroupEntity::getCatelogId, catelogId);
+        List<AttrGroupEntity> list = this.list(queryWrapper);
+        return list.stream().map(it -> {
+            AttrGroupWithAttrsVo attrGroupWithAttrsVo = new AttrGroupWithAttrsVo();
+            BeanUtils.copyProperties(it, attrGroupWithAttrsVo);
+            List<AttrEntity> attrs = attrService.getAttrRelation(String.valueOf(it.getAttrGroupId()));
+            attrGroupWithAttrsVo.setAttrs(attrs);
+            return attrGroupWithAttrsVo;
+        }).toList();
     }
 
 }

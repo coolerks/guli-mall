@@ -83,7 +83,7 @@
                   ></el-input>
                   <el-select
                     v-model="dataResp.baseAttrs[gidx][aidx].attrValues"
-                    :multiple="attr.valueType == 1"
+                    :multiple="attr.valueType === 1"
                     filterable
                     allow-create
                     default-first-option

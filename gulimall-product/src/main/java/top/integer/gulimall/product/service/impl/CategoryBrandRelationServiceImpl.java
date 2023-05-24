@@ -1,8 +1,12 @@
 package top.integer.gulimall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -20,6 +24,7 @@ import top.integer.gulimall.product.entity.CategoryEntity;
 import top.integer.gulimall.product.service.BrandService;
 import top.integer.gulimall.product.service.CategoryBrandRelationService;
 import top.integer.gulimall.product.service.CategoryService;
+import top.integer.gulimall.product.vo.BrandVo;
 
 
 @Service("categoryBrandRelationService")
@@ -66,5 +71,17 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
                 .set(CategoryBrandRelationEntity::getCatelogName, name);
         this.update(updateWrapper);
     }
+
+    @Override
+    public List<BrandVo> getCategoryBrand(Long catId) {
+        LambdaQueryWrapper<CategoryBrandRelationEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CategoryBrandRelationEntity::getCatelogId, catId);
+        return this.list(queryWrapper).stream().map(it -> {
+            BrandVo brandVo = new BrandVo();
+            BeanUtils.copyProperties(it, brandVo);
+            return brandVo;
+        }).toList();
+    }
+
 
 }

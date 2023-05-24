@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-upload
-      action="http://gulimall.oss-cn-shanghai.aliyuncs.com"
+      action="https://gulimall-gulimall-gulimall-gulimall-gulimall.oss-cn-beijing.aliyuncs.com"
       :data="dataObj"
       list-type="picture-card"
       :file-list="fileList"
@@ -98,7 +98,7 @@ export default {
       this.fileList.push({
         name: file.name,
         // url: this.dataObj.host + "/" + this.dataObj.dir + "/" + file.name； 替换${filename}为真正的文件名
-        url: this.dataObj.host + "/" + this.dataObj.key.replace("${filename}",file.name)
+        url: "http://" + this.dataObj.host + "/" + this.dataObj.key.replace("${filename}",file.name)
       });
       this.emitInput(this.fileList);
     },

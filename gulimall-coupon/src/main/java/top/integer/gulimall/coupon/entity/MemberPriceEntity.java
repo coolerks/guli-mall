@@ -7,16 +7,18 @@ import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * 商品会员价格
- * 
+ *
  * @author songxiaoxu
  * @email songxiaoxu2002@gmail.com
  * @date 2023-05-15 15:31:51
  */
 @Data
 @TableName("sms_member_price")
+@ToString
 public class MemberPriceEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 

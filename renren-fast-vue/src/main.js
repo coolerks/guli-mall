@@ -4,6 +4,7 @@ import router from '@/router'                 // api: https://github.com/vuejs/v
 import store from '@/store'                   // api: https://github.com/vuejs/vuex
 import VueCookie from 'vue-cookie'            // api: https://github.com/alfhen/vue-cookie
 import '@/element-ui'                         // api: https://github.com/ElemeFE/element
+import ElementUI from 'element-ui'                         // api: https://github.com/ElemeFE/element
 import '@/icons'                              // api: http://www.iconfont.cn/
 import '@/element-ui-theme'
 import '@/assets/scss/index.scss'
@@ -14,6 +15,7 @@ import Pubsub from "pubsub-js"
 
 Vue.use(VueCookie)
 Vue.config.productionTip = false
+Vue.use(ElementUI);
 
 // 非生产环境, 适配mockjs模拟数据                 // api: https://github.com/nuysoft/Mock
 if (process.env.NODE_ENV !== 'production') {

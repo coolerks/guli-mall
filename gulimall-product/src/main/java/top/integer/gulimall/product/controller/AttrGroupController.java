@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.R;
 import top.integer.gulimall.product.service.AttrService;
 import top.integer.gulimall.product.vo.AttrGroupRelationVo;
+import top.integer.gulimall.product.vo.AttrGroupWithAttrsVo;
 
 
 /**
@@ -47,6 +49,12 @@ public class AttrGroupController {
         PageUtils page = attrGroupService.queryPage(params, catalogId);
 
         return R.ok().put("page", page);
+    }
+
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrGroupWithAttrs(@PathVariable Long catelogId) {
+        List<AttrGroupWithAttrsVo> list = attrGroupService.getAttrGroupWithAttrsByCatelogId(catelogId);
+        return R.ok().put("data", list);
     }
 
     @PostMapping("/attr/relation")
