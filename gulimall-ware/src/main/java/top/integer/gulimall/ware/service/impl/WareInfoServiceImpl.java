@@ -1,5 +1,7 @@
 package top.integer.gulimall.ware.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,10 +20,14 @@ public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<WareInfoEntity> page = this.page(
-                new Query<WareInfoEntity>().getPage(params),
-                new QueryWrapper<WareInfoEntity>()
+        LambdaQueryWrapper<WareInfoEntity> queryWrapper = new LambdaQueryWrapper<>();
+        String key = (String) params.get("key");
+        queryWrapper.or(StringUtils.isNotBlank(key), c -> c.like(WareInfoEntity::getName, "%" + key + "%")
+                .or().like(WareInfoEntity::getAddress, "%" + key + "%")
+                .or().eq(WareInfoEntity::getId, key)
+                .or().eq(WareInfoEntity::getAreacode, key)
         );
+        IPage<WareInfoEntity> page = this.page(new Query<WareInfoEntity>().getPage(params), queryWrapper);
 
         return new PageUtils(page);
     }

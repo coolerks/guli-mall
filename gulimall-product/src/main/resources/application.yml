@@ -5,6 +5,9 @@ spring:
     url: jdbc:mysql://localhost:3306/gulimall_pms
     username: root
     password: 20020327
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   cloud:
     nacos:
       discovery:

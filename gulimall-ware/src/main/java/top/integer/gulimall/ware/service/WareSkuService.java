@@ -1,6 +1,7 @@
 package top.integer.gulimall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
 import top.integer.common.utils.PageUtils;
 import top.integer.gulimall.ware.entity.WareSkuEntity;
 
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface WareSkuService extends IService<WareSkuEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void addStock(@Param("skuId") Long skuId, @Param("wareId") Long wareId, @Param("skuNum") Integer skuNum);
 }
 

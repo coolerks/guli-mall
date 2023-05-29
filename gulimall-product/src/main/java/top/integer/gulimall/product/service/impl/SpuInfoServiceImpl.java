@@ -1,5 +1,6 @@
 package top.integer.gulimall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
@@ -54,11 +55,30 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<SpuInfoEntity> page = this.page(
-                new Query<SpuInfoEntity>().getPage(params),
-                new QueryWrapper<SpuInfoEntity>()
-        );
+        String sidx = "null".equals(String.valueOf(params.get("sidx"))) ? null : String.valueOf(params.get("sidx"));
+        String order = "null".equals(String.valueOf(params.get("order"))) ? null : String.valueOf(params.get("order"));
+        String key = "null".equals(String.valueOf(params.get("key"))) ? null : String.valueOf(params.get("key"));
+        String catelogId = "null".equals(String.valueOf(params.get("catelogId"))) ? null : String.valueOf(params.get("catelogId"));
+        String brandId = "null".equals(String.valueOf(params.get("brandId"))) ? null : String.valueOf(params.get("brandId"));
+        String status = "null".equals(String.valueOf(params.get("status"))) ? null : String.valueOf(params.get("status"));
 
+        QueryWrapper<SpuInfoEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderBy(StringUtils.isNotBlank(sidx), "asc".equals(order), sidx);
+        queryWrapper.eq(StringUtils.isNotBlank(catelogId), "catalog_id", catelogId);
+        queryWrapper.eq(StringUtils.isNotBlank(brandId), "brand_id", brandId);
+        queryWrapper.eq(StringUtils.isNotBlank(status), "publish_status", status);
+        queryWrapper.and(StringUtils.isNotBlank(key), c -> c.eq("id", key)
+                .or().eq("spu_name", "%" + key + "%")
+                .or().eq("spu_description", "%" + key + "%")
+        );
+//                sidx: 'id',//排序字段
+//                order: 'asc/desc',//排序方式
+//                key: '华为',//检索关键字
+//                catelogId: 6,//三级分类id
+//                brandId: 1,//品牌id
+//                status: 0,//商品状态
+
+        IPage<SpuInfoEntity> page = this.page(new Query<SpuInfoEntity>().getPage(params), queryWrapper);
         return new PageUtils(page);
     }
 

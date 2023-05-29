@@ -7,16 +7,18 @@ import java.math.BigDecimal;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * sku信息
- * 
+ *
  * @author songxiaoxu
  * @email songxiaoxu2002@gmail.com
  * @date 2023-05-15 14:57:34
  */
 @Data
 @TableName("pms_sku_info")
+@ToString
 public class SkuInfoEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
