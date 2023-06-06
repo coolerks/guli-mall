@@ -1,9 +1,11 @@
 package top.integer.gulimall.product.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -56,6 +58,13 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 //                max: 0
         IPage<SkuInfoEntity> page = this.page(new Query<SkuInfoEntity>().getPage(params), queryWrapper);
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<SkuInfoEntity> getBySpuId(Long spuId) {
+        LambdaQueryWrapper<SkuInfoEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SkuInfoEntity::getSpuId, spuId);
+        return this.list(queryWrapper);
     }
 
 }

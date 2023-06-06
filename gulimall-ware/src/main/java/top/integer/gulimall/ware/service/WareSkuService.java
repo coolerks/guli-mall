@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import top.integer.common.utils.PageUtils;
 import top.integer.gulimall.ware.entity.WareSkuEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,5 +20,7 @@ public interface WareSkuService extends IService<WareSkuEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     void addStock(@Param("skuId") Long skuId, @Param("wareId") Long wareId, @Param("skuNum") Integer skuNum);
+
+    Map<Long, Boolean> hasStock(List<Long> skuIds);
 }
 

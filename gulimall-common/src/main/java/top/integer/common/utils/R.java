@@ -8,6 +8,9 @@
 
 package top.integer.common.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
@@ -20,10 +23,22 @@ import java.util.Map;
  */
 public class R extends HashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	public R() {
 		put("code", 0);
 		put("msg", "success");
+	}
+
+	public <T> T getData(TypeReference<T> typeReference) {
+
+		try {
+			String json = OBJECT_MAPPER.writeValueAsString(get("data"));
+			return OBJECT_MAPPER.readValue(json, typeReference);
+		} catch (JsonProcessingException ignored) {
+
+		}
+		return null;
 	}
 
 	public static R error() {

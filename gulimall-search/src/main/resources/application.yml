@@ -1,0 +1,14 @@
+spring:
+  elasticsearch:
+    uris: http://localhost:9200
+    username: elastic
+    password: 20020327
+  application:
+    name: gulimall-search
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+server:
+  port: 12000

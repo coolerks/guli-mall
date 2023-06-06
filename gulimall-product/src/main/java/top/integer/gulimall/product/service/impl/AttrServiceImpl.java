@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -208,5 +210,13 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             return new PageUtils(this.page(page, attrQueryWrapper));
         }
         return new PageUtils(Collections.emptyList(), 0, 0, 0);
+    }
+
+    @Override
+    public Set<Long> getAttrIdsAllowedToSearch(List<Long> attrIds) {
+        LambdaQueryWrapper<AttrEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(AttrEntity::getAttrId, attrIds)
+                .eq(AttrEntity::getSearchType, 1);
+        return this.list(queryWrapper).stream().map(AttrEntity::getAttrId).collect(Collectors.toSet());
     }
 }

@@ -7,8 +7,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -62,8 +65,20 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             }
             wareSku.setStock(skuNum);
             wareSku.setWareId(wareId);
+            wareSku.setSkuId(skuId);
             baseMapper.insert(wareSku);
         }
+    }
+
+    @Override
+    public Map<Long, Boolean> hasStock(List<Long> skuIds) {
+        QueryWrapper<WareSkuEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("sku_id", " sum(stock) - sum(stock_locked) stock")
+                .in("sku_id", skuIds)
+                .groupBy("sku_id");
+        List<WareSkuEntity> wareSkuEntities = baseMapper.selectList(queryWrapper);
+        return wareSkuEntities.stream()
+                .collect(Collectors.toMap(WareSkuEntity::getSkuId, w -> w.getStock() > 0));
     }
 
 }

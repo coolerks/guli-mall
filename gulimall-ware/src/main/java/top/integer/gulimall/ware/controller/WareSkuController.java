@@ -1,14 +1,11 @@
 package top.integer.gulimall.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import top.integer.gulimall.ware.entity.WareSkuEntity;
 import top.integer.gulimall.ware.service.WareSkuService;
@@ -40,6 +37,15 @@ public class WareSkuController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 查看是否有库存
+     * @param skuIds
+     * @return
+     */
+    @PostMapping("/hasstock")
+    public R hasStock(@RequestBody List<Long> skuIds) {
+        return R.ok().put("data", wareSkuService.hasStock(skuIds));
+    }
 
     /**
      * 信息
