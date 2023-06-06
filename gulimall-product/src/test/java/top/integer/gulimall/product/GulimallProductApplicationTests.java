@@ -1,14 +1,19 @@
 package top.integer.gulimall.product;
 
 import com.aliyun.oss.OSS;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import top.integer.common.utils.R;
 import top.integer.gulimall.product.entity.BrandEntity;
 import top.integer.gulimall.product.feign.WareFeign;
 import top.integer.gulimall.product.service.BrandService;
+import top.integer.gulimall.product.service.CategoryService;
+import top.integer.gulimall.product.vo.CataLog1Vo;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +29,12 @@ class GulimallProductApplicationTests {
 
 	@Autowired
 	private WareFeign wareFeign;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@Autowired
+	private CategoryService categoryService;
 	@Test
 	void contextLoads() {
 //		System.out.println("brandService = " + brandService);
@@ -43,6 +54,22 @@ class GulimallProductApplicationTests {
 		});
 		System.out.println("data = " + data);
 		System.out.println("data.get(6L) = " + data.get(6L));
+	}
+
+	@Autowired
+	private ThymeleafProperties thymeleafProperties;
+
+
+	@Test
+	void properties() {
+		System.out.println("thymeleafProperties = " + thymeleafProperties);
+	}
+
+	@Test
+	void testCategoryJson() throws JsonProcessingException {
+		Map<String, List<CataLog1Vo>> catelogJson = categoryService.getCatelogJson();
+		String json = objectMapper.writeValueAsString(catelogJson);
+		System.out.println("json = " + json);
 	}
 
 }

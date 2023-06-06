@@ -37,6 +37,10 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /renren-fast/$\{segment}
+        - id: gulimall_route
+          uri: lb://gulimall-product
+          predicates:
+            - Host=**.gulimall.com
       globalcors:
         cors-configurations:
           '[/**]':
