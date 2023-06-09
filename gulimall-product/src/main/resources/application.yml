@@ -5,6 +5,8 @@ spring:
     url: jdbc:mysql://localhost:3306/gulimall_pms
     username: root
     password: 20020327
+  cache:
+    type: redis
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -16,6 +18,10 @@ spring:
     name: gulimall-product
   thymeleaf:
     cache: false
+  redis:
+    host: localhost
+    port: 6379
+    database: 2
 mybatis-plus:
   global-config:
     db-config:
