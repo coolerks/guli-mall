@@ -244,10 +244,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 // 查询品牌
                 product.setCatalogName(category.getName());
                 product.setBrandName(brand.getName());
+                product.setBrandImg(brand.getLogo());
                 product.setAttrs(attrsList);
 
                 // todo 设置是否有库存
-                product.setHasStock(stockMap.get(product.getSkuId()));
+                product.setHasStock(stockMap.getOrDefault(product.getSkuId(), false));
 
                 return product;
             }).toList();
