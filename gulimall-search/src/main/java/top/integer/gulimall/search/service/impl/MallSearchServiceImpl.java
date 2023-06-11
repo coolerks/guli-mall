@@ -1,5 +1,7 @@
 package top.integer.gulimall.search.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.search.join.ScoreMode;
@@ -26,20 +28,28 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+import top.integer.common.utils.R;
 import top.integer.gulimall.search.constant.EsConstant;
 import top.integer.gulimall.search.entry.Product;
+import top.integer.gulimall.search.feign.ProductFeign;
 import top.integer.gulimall.search.service.MallSearchService;
+import top.integer.gulimall.search.vo.AttrResponseVo;
 import top.integer.gulimall.search.vo.SearchParam;
 import top.integer.gulimall.search.vo.SearchResult;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class MallSearchServiceImpl implements MallSearchService {
     @Autowired
     private ElasticsearchRestTemplate template;
+    @Autowired
+    private ProductFeign productFeign;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public SearchResult search(SearchParam searchParam) {
@@ -133,10 +143,41 @@ public class MallSearchServiceImpl implements MallSearchService {
         }).toList();
         searchResult.setProducts(products);
         resolveAggregation((Aggregations) search.getAggregations().aggregations(), searchResult);
-        searchResult.setPageNum(pageNum);
+        searchResult.setPageNum(pageNum + 1);
         searchResult.setTotalPages((int) (search.getTotalHits() % EsConstant.PAGE_SIZE == 0 ?
                 search.getTotalHits() / EsConstant.PAGE_SIZE : search.getTotalHits() / EsConstant.PAGE_SIZE + 1));
         System.out.println("searchResult = " + searchResult);
+
+
+        // 6. 构建面包屑导航
+        List<String> attrs = searchParam.getAttrs();
+        if (attrs != null && attrs.size() > 0) {
+            List<SearchResult.NavVo> navVos = attrs.stream().map(attr -> {
+                String[] split = attr.split("_");
+                SearchResult.NavVo navVo = new SearchResult.NavVo();
+                //6.1 设置属性值
+                navVo.setNavValue(split[1]);
+                //6.2 查询并设置属性名
+                try {
+                    R r = productFeign.info(Long.parseLong(split[0]));
+                    if (r.getCode() == 0) {
+                        AttrResponseVo attrResponseVo = objectMapper.readValue(objectMapper.writeValueAsString(r.get("attr")), new TypeReference<AttrResponseVo>() {
+                        });
+                        navVo.setNavName(attrResponseVo.getAttrName());
+                    }
+                } catch (Exception e) {
+                    log.error("远程调用商品服务查询属性失败", e);
+                }
+                //6.3 设置面包屑跳转链接
+                String queryString = searchParam.getQueryString();
+                String replace = queryString.replace("&attrs=" + attr, "").replace("attrs=" + attr+"&", "").replace("attrs=" + attr, "");
+                navVo.setLink("http://search.gulimall.com/list.html" + (replace.isEmpty()?"":"?"+replace));
+                return navVo;
+            }).collect(Collectors.toList());
+            searchResult.setNavs(navVos);
+        }
+
+
         return searchResult;
     }
 

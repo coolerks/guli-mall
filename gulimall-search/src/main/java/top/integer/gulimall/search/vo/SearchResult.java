@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.ToString;
 import top.integer.gulimall.search.entry.Product;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,6 +29,16 @@ public class SearchResult {
     private Integer pageNum;
     private Long total;
     private Integer totalPages;
+    private List<Integer> pageNavs;
+    private List<NavVo> navs;
+
+    @Data
+    @ToString
+    public static class NavVo {
+        private String navName;
+        private String navValue;
+        private String link;
+    }
 
     @Data
     @ToString
