@@ -18,7 +18,10 @@ import top.integer.common.utils.R;
 import top.integer.gulimall.product.feign.WareFeign;
 import top.integer.gulimall.product.service.BrandService;
 import top.integer.gulimall.product.service.CategoryService;
+import top.integer.gulimall.product.service.SkuInfoService;
+import top.integer.gulimall.product.service.SkuSaleAttrValueService;
 import top.integer.gulimall.product.vo.CataLog1Vo;
+import top.integer.gulimall.product.vo.SkuItemVo;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +51,11 @@ class GulimallProductApplicationTests {
     private RedissonClient redissonClient;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private SkuInfoService skuInfoService;
+
+    @Autowired
+    private SkuSaleAttrValueService skuSaleAttrValueService;
 
     @Test
     void contextLoads() {
@@ -108,5 +116,16 @@ class GulimallProductApplicationTests {
         CacheAutoConfiguration bean = applicationContext.getBean(CacheAutoConfiguration.class);
         System.out.println("bean = " + bean);
         System.out.println("RedisCacheManager.class = " + RedisCacheManager.class);
+    }
+
+    @Test
+    void testProduct() {
+        SkuItemVo item = skuInfoService.item(68L);
+        System.out.println("item = " + item);
+    }
+
+    @Test
+    void testItemSaleAttrsVo() {
+        System.out.println("skuSaleAttrValueService.getSaleAttrsBySpuId(15L) = " + skuSaleAttrValueService.getSaleAttrsBySpuId(15L));
     }
 }

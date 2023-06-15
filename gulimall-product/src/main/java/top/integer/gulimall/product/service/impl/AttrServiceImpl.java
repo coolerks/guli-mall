@@ -219,4 +219,5 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                 .eq(AttrEntity::getSearchType, 1);
         return this.list(queryWrapper).stream().map(AttrEntity::getAttrId).collect(Collectors.toSet());
     }
+
 }

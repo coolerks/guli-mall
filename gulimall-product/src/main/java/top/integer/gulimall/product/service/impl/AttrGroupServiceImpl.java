@@ -25,7 +25,9 @@ import top.integer.gulimall.product.entity.AttrGroupEntity;
 import top.integer.gulimall.product.service.AttrGroupService;
 import top.integer.gulimall.product.service.AttrService;
 import top.integer.gulimall.product.service.CategoryService;
+import top.integer.gulimall.product.service.ProductAttrValueService;
 import top.integer.gulimall.product.vo.AttrGroupWithAttrsVo;
+import top.integer.gulimall.product.vo.SkuItemVo;
 
 
 @Service("attrGroupService")
@@ -36,6 +38,9 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Autowired
     private AttrService attrService;
+
+    @Autowired
+    private ProductAttrValueService productAttrValueService;
 
 
 
@@ -82,6 +87,11 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             attrGroupWithAttrsVo.setAttrs(attrs);
             return attrGroupWithAttrsVo;
         }).toList();
+    }
+
+    @Override
+    public List<SkuItemVo.SpuItemAttrGroupVo> getAttrgroupWithAttrsBySpuId(Long spuId, Long catalogId) {
+        return baseMapper.getAttrGroupWithAttrsBySpuIdAndCatalogId(spuId, catalogId);
     }
 
 }
