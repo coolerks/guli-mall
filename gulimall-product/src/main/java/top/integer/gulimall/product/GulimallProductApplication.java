@@ -9,8 +9,11 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
+import top.integer.gulimall.product.service.AttrService;
 
 import java.io.File;
+import java.util.Optional;
+import java.util.ServiceLoader;
 
 @SpringBootApplication
 @MapperScan("top.integer.gulimall.product.dao")

@@ -4,18 +4,16 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import top.integer.common.exception.BizCodeEnume;
 import top.integer.gulimall.member.entity.MemberEntity;
 import top.integer.gulimall.member.feign.CouponFeignService;
 import top.integer.gulimall.member.service.MemberService;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.R;
-
+import top.integer.gulimall.member.vo.UserLoginVo;
+import top.integer.gulimall.member.vo.UserRegistVo;
 
 
 /**
@@ -77,6 +75,24 @@ public class MemberController {
     public R update(@RequestBody MemberEntity member){
 		memberService.updateById(member);
 
+        return R.ok();
+    }
+
+    @PostMapping("/regist")
+    public R regist(@RequestBody UserRegistVo userRegistVo) {
+        try {
+            memberService.regist(userRegistVo);
+        } catch (RuntimeException e) {
+            return R.error(BizCodeEnume.USER_EXIST_EXCEPTION.getCode(), BizCodeEnume.USER_EXIST_EXCEPTION.getMsg());
+        }
+        return R.ok();
+    }
+
+    @PostMapping("/login")
+    public R login(@RequestBody UserLoginVo userLoginVo) {
+        if (memberService.login(userLoginVo) == null) {
+            return R.error(BizCodeEnume.LOGIN_INVALID.getCode(), BizCodeEnume.LOGIN_INVALID.getMsg());
+        }
         return R.ok();
     }
 

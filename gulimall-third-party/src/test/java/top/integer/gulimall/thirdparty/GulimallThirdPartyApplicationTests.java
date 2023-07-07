@@ -5,6 +5,7 @@ import com.aliyun.oss.model.PutObjectResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import top.integer.gulimall.thirdparty.controller.SmsController;
 
 import java.io.File;
 
@@ -13,11 +14,7 @@ class GulimallThirdPartyApplicationTests {
 
     @Autowired
     private OSS oss;
-
-    @Test
-    void contextLoads() {
-//        PutObjectResult putObjectResult = oss.putObject("gulimall-gulimall-gulimall-gulimall-gulimall", "博客2.drawio (2).png", new File("D:\\Download\\博客2.drawio (2).png"));
-//        System.out.println("putObjectResult = " + putObjectResult);
-    }
+    @Autowired
+    private SmsController smsController;
 
 }
