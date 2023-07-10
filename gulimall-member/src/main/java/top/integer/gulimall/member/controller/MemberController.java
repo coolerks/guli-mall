@@ -12,6 +12,7 @@ import top.integer.gulimall.member.feign.CouponFeignService;
 import top.integer.gulimall.member.service.MemberService;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.R;
+import top.integer.gulimall.member.vo.AccessTokenVo;
 import top.integer.gulimall.member.vo.UserLoginVo;
 import top.integer.gulimall.member.vo.UserRegistVo;
 
@@ -103,6 +104,12 @@ public class MemberController {
     public R delete(@RequestBody Long[] ids){
 		memberService.removeByIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+
+    @PostMapping("/oauth2/login")
+    public R loginOrRegister(@RequestBody AccessTokenVo accessTokenVo) {
+        memberService.loginOrRegister(accessTokenVo);
         return R.ok();
     }
 

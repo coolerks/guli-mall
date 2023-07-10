@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import top.integer.common.utils.R;
+import top.integer.gulimall.auth.vo.AccessTokenVo;
 import top.integer.gulimall.auth.vo.UserLoginVo;
 import top.integer.gulimall.auth.vo.UserRegistVo;
 
@@ -16,4 +17,7 @@ public interface MemberFeign {
 
     @PostMapping("/member/member/login")
     R login(@RequestBody UserLoginVo vo);
+
+    @PostMapping("/member/member/oauth2/login")
+    R oauth2(@RequestBody AccessTokenVo accessTokenVo);
 }

@@ -1,6 +1,7 @@
 package top.integer.gulimall.member.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.springframework.beans.BeanUtils;
@@ -11,6 +12,7 @@ import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.web.bind.annotation.RequestBody;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.Query;
 
@@ -18,16 +20,26 @@ import top.integer.gulimall.member.dao.MemberDao;
 import top.integer.gulimall.member.dao.MemberLevelDao;
 import top.integer.gulimall.member.entity.MemberEntity;
 import top.integer.gulimall.member.entity.MemberLevelEntity;
+import top.integer.gulimall.member.entity.MemberOauth2;
+import top.integer.gulimall.member.feign.UserInfoFeign;
+import top.integer.gulimall.member.service.MemberOauth2Service;
 import top.integer.gulimall.member.service.MemberService;
+import top.integer.gulimall.member.vo.AccessTokenVo;
+import top.integer.gulimall.member.vo.UserInfoVo;
 import top.integer.gulimall.member.vo.UserLoginVo;
 import top.integer.gulimall.member.vo.UserRegistVo;
 
 
 @Service("memberService")
+@Slf4j
 public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> implements MemberService {
 
     @Autowired
     private MemberLevelDao memberLevelDao;
+    @Autowired
+    private UserInfoFeign userInfoFeign;
+    @Autowired
+    private MemberOauth2Service memberOauth2Service;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -76,6 +88,25 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
             return null;
         }
         return memberEntity;
+    }
+
+    @Override
+    public void loginOrRegister(AccessTokenVo accessTokenVo) {
+        UserInfoVo userInfo = userInfoFeign.getUserInfo(accessTokenVo.getAccess_token(), accessTokenVo.getOpenid());
+        MemberOauth2 memberOauth2 = memberOauth2Service.getOne(new LambdaQueryWrapper<MemberOauth2>()
+                .eq(MemberOauth2::getUid, userInfo.getOpenid()));
+        if (memberOauth2 == null) {
+            MemberEntity memberEntity = new MemberEntity();
+            memberEntity.setNickname(userInfo.getNickname());
+            this.save(memberEntity);
+            MemberOauth2 oauth2 = new MemberOauth2();
+            oauth2.setMemberId(memberEntity.getId());
+            oauth2.setUid(userInfo.getOpenid());
+            memberOauth2Service.save(oauth2);
+            log.info("{}注册了，注册信息为{}", userInfo.getNickname(), memberEntity);
+        } else {
+            log.info("{}登陆了", userInfo.getNickname());
+        }
     }
 
 }

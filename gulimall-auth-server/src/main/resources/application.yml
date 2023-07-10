@@ -13,5 +13,5 @@ spring:
     database: 2
 
 server:
-  port: 20000
+  port: 8200
 

@@ -4,7 +4,20 @@
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="/static/login/JD_sass/JD1.css" />
 		<script src="/static/login/JD_js/jquery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js" type="text/javascript"></script>
 		<title>gulimall</title>
+		<script>
+			window.onload = () => {
+				var obj = new WxLogin({
+					id: "login-con",
+					appid: "wxc606fb748aedee7c",
+					scope: "snsapi_login",
+					redirect_uri: "http%3A%2F%2Flocalhost%3A8200%2Fapi%2Fuser%2Fwx%2Fcallback",
+					state: 'STATE',
+					self_redirect: false
+				});
+			}
+		</script>
 	</head>
 	<body>
 		<!--顶部logo-->
@@ -40,7 +53,10 @@
 					<h2 class="btn1">账户登录</h2>
 				</div>
 				<div class="si_bom tab">
-					<img src="/static/login/JD_img/show.png" class="bom_1" />
+					<div id="login-con" class="bom_1">
+
+					</div>
+<!--					<img src="/static/login/JD_img/show.png" class="bom_1" />-->
 					<a href="#"><img src="/static/login/JD_img/phone-orange.png" class="bom_2" /></a>
 					<h6>打开<span class="red">手机谷粒商城</span> 扫描二维码</h6>
 					<p>
