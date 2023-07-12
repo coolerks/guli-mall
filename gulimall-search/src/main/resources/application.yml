@@ -12,5 +12,15 @@ spring:
         file-extension: yml
   thymeleaf:
     cache: false
+  redis:
+    host: localhost
+    port: 6379
+    database: 2
+  session:
+    store-type: redis
+
 server:
   port: 12000
+  servlet:
+    session:
+      timeout: 36000

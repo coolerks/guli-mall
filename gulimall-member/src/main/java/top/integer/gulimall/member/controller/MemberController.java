@@ -91,10 +91,11 @@ public class MemberController {
 
     @PostMapping("/login")
     public R login(@RequestBody UserLoginVo userLoginVo) {
-        if (memberService.login(userLoginVo) == null) {
+        MemberEntity member = memberService.login(userLoginVo);
+        if (member == null) {
             return R.error(BizCodeEnume.LOGIN_INVALID.getCode(), BizCodeEnume.LOGIN_INVALID.getMsg());
         }
-        return R.ok();
+        return R.ok().put("data", member);
     }
 
     /**
@@ -109,8 +110,7 @@ public class MemberController {
 
     @PostMapping("/oauth2/login")
     public R loginOrRegister(@RequestBody AccessTokenVo accessTokenVo) {
-        memberService.loginOrRegister(accessTokenVo);
-        return R.ok();
+        return R.ok().put("data", memberService.loginOrRegister(accessTokenVo));
     }
 
 }

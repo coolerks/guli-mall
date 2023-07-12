@@ -24,6 +24,6 @@ public interface MemberService extends IService<MemberEntity> {
 
     MemberEntity login(UserLoginVo userLoginVo);
 
-    void loginOrRegister(AccessTokenVo accessTokenVo);
+    MemberEntity loginOrRegister(AccessTokenVo accessTokenVo);
 }
 

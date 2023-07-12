@@ -73,6 +73,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
                 .eq(MemberLevelEntity::getDefaultStatus, 1));
         // 设置默认等级
         memberEntity.setLevelId(memberLevelEntity.getId());
+        memberEntity.setNickname(memberEntity.getUsername());
         baseMapper.insert(memberEntity);
     }
 
@@ -91,7 +92,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
     }
 
     @Override
-    public void loginOrRegister(AccessTokenVo accessTokenVo) {
+    public MemberEntity loginOrRegister(AccessTokenVo accessTokenVo) {
         UserInfoVo userInfo = userInfoFeign.getUserInfo(accessTokenVo.getAccess_token(), accessTokenVo.getOpenid());
         MemberOauth2 memberOauth2 = memberOauth2Service.getOne(new LambdaQueryWrapper<MemberOauth2>()
                 .eq(MemberOauth2::getUid, userInfo.getOpenid()));
@@ -103,9 +104,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
             oauth2.setMemberId(memberEntity.getId());
             oauth2.setUid(userInfo.getOpenid());
             memberOauth2Service.save(oauth2);
-            log.info("{}注册了，注册信息为{}", userInfo.getNickname(), memberEntity);
+            return memberEntity;
         } else {
-            log.info("{}登陆了", userInfo.getNickname());
+            return this.getById(memberOauth2.getMemberId());
         }
     }
 

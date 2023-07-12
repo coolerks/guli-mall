@@ -1,5 +1,6 @@
 package top.integer.gulimall.auth.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import top.integer.common.exception.BizCodeEnume;
 import top.integer.common.utils.R;
+import top.integer.common.vo.MemberEntity;
 import top.integer.gulimall.auth.feign.MemberFeign;
 import top.integer.gulimall.auth.feign.SmsFeign;
 import top.integer.gulimall.auth.vo.UserLoginVo;
 import top.integer.gulimall.auth.vo.UserRegistVo;
 
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -57,10 +60,16 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(UserLoginVo userLoginVo) {
-        System.out.println("userLoginVo = " + userLoginVo);
-        R result = memberFeign.login(userLoginVo);
-        if (result.getCode() != 0) {
+    public String login(UserLoginVo userLoginVo, HttpSession session) {
+        try {
+            R result = memberFeign.login(userLoginVo);
+            if (result.getCode() != 0) {
+                return "redirect:http://auth.gulimall.com/login.html";
+            }
+            MemberEntity member = result.getData(new TypeReference<MemberEntity>() {
+            });
+            session.setAttribute("loginUser", member);
+        } catch (Exception e) {
             return "redirect:http://auth.gulimall.com/login.html";
         }
         return "redirect:http://gulimall.com";

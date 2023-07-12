@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import top.integer.gulimall.product.service.AttrService;
 
 import java.io.File;
@@ -20,6 +22,8 @@ import java.util.ServiceLoader;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableCaching
+@EnableRedisHttpSession
+@ComponentScan("top.integer")
 public class GulimallProductApplication {
 
 	public static void main(String[] args) {
