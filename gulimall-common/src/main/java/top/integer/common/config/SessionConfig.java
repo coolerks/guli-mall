@@ -1,12 +1,9 @@
 package top.integer.common.config;
 
-import org.springframework.context.annotation.Configuration;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.session.web.http.CookieSerializer;
@@ -28,6 +25,7 @@ public class SessionConfig implements BeanClassLoaderAware {
     /**
      * Customized {@link ObjectMapper} to add mix-in for class that doesn't have default
      * constructors
+     *
      * @return the {@link ObjectMapper} to use
      */
     private ObjectMapper objectMapper() {
@@ -44,6 +42,8 @@ public class SessionConfig implements BeanClassLoaderAware {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
         serializer.setCookieName("GULI");
         serializer.setDomainName("gulimall.com");
+        serializer.setCookieMaxAge(3600 * 24 * 30);
         return serializer;
     }
+
 }

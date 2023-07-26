@@ -68,6 +68,7 @@ public class LoginController {
             }
             MemberEntity member = result.getData(new TypeReference<MemberEntity>() {
             });
+            System.out.println("member = " + member);
             session.setAttribute("loginUser", member);
         } catch (Exception e) {
             return "redirect:http://auth.gulimall.com/login.html";

@@ -41,6 +41,18 @@ public class R extends HashMap<String, Object> {
 		return null;
 	}
 
+	public <T> T getData(String key, TypeReference<T> typeReference) {
+
+		try {
+			String json = OBJECT_MAPPER.writeValueAsString(get(key));
+			return OBJECT_MAPPER.readValue(json, typeReference);
+		} catch (JsonProcessingException ignored) {
+
+		}
+		return null;
+	}
+
+
 	public static R error() {
 		return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "未知异常，请联系管理员");
 	}
