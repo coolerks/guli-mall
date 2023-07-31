@@ -15,6 +15,7 @@ import top.integer.gulimall.cart.vo.CartItemVo;
 import top.integer.gulimall.cart.vo.CartVo;
 import top.integer.gulimall.cart.vo.UserInfo;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RequestMapping("/")
@@ -25,11 +26,18 @@ public class CartController {
     @GetMapping("/cart.html")
     public String cartList(Model model) {
         UserInfo userInfo = CartInterceptor.userInfo.get();
-
         CartVo cartVo = cartService.getCart();
         model.addAttribute("cart", cartVo);
         System.out.println("cartVo = " + cartVo);
         return "cartList";
+    }
+
+    @ResponseBody
+    @GetMapping("/currentUserCartItems")
+    public List<CartItemVo> getCurrentUserCartItems() {
+        UserInfo userInfo = CartInterceptor.userInfo.get();
+        System.out.println("userInfo = " + userInfo);
+        return cartService.currentUserCartItems(userInfo.getUserId());
     }
 
     @GetMapping("/addCartItem")

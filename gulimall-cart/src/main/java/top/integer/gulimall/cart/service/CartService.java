@@ -18,6 +18,7 @@ import top.integer.gulimall.cart.vo.UserInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -155,6 +156,16 @@ public class CartService {
     public void deleteItem(Long skuId) {
         BoundHashOperations<Object, Object, Object> cartOps = getCartOps();
         cartOps.delete(String.valueOf(skuId));
+    }
+
+    public List<CartItemVo> currentUserCartItems(Long memberId) {
+        BoundHashOperations<Object, Object, Object> cartOps = getCartOps(String.valueOf(memberId));
+        return Optional.ofNullable(cartOps.values())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(it -> (CartItemVo) it)
+                .filter(CartItemVo::getCheck)
+                .toList();
     }
 }
 

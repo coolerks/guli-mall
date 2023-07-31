@@ -1,14 +1,13 @@
 package top.integer.gulimall.member.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import top.integer.gulimall.member.entity.MemberReceiveAddressEntity;
 import top.integer.gulimall.member.service.MemberReceiveAddressService;
@@ -29,6 +28,12 @@ import top.integer.common.utils.R;
 public class MemberReceiveAddressController {
     @Autowired
     private MemberReceiveAddressService memberReceiveAddressService;
+
+    @GetMapping("/address")
+    public List<MemberReceiveAddressEntity> getMemberAddress(Long memberId) {
+        return memberReceiveAddressService.list(new LambdaQueryWrapper<MemberReceiveAddressEntity>()
+                .eq(MemberReceiveAddressEntity::getMemberId, memberId));
+    }
 
     /**
      * 列表

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 
 @Service("skuInfoService")
@@ -112,6 +113,16 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
         CompletableFuture.allOf(getImages, getSaleAttr, getDesp, getGroupAttr).get();
         return spuItemVo;
+    }
+
+    @Override
+    public Map<Long, BigDecimal> getPrice(List<Long> ids) {
+        return this.list(new LambdaQueryWrapper<SkuInfoEntity>()
+                        .select(SkuInfoEntity::getSkuId, SkuInfoEntity::getPrice)
+                        .in(SkuInfoEntity::getSkuId, ids)
+                )
+                .stream()
+                .collect(Collectors.toMap(SkuInfoEntity::getSkuId, SkuInfoEntity::getPrice));
     }
 
 }

@@ -1,5 +1,8 @@
 package top.integer.gulimall.order.service.impl;
 
+import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,6 +13,7 @@ import top.integer.common.utils.Query;
 
 import top.integer.gulimall.order.dao.OrderItemDao;
 import top.integer.gulimall.order.entity.OrderItemEntity;
+import top.integer.gulimall.order.entity.OrderReturnReasonEntity;
 import top.integer.gulimall.order.service.OrderItemService;
 
 
@@ -25,5 +29,6 @@ public class OrderItemServiceImpl extends ServiceImpl<OrderItemDao, OrderItemEnt
 
         return new PageUtils(page);
     }
+
 
 }
