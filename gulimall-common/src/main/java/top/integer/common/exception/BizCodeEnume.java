@@ -12,7 +12,8 @@ public enum BizCodeEnume {
     SMS_CODE_EXCEPTION(10002,"请稍候再尝试获取验证码"),
     PRODUCT_UP_EXCEPTION(11000,"商品上架异常"),
     USER_EXIST_EXCEPTION(15000,"用户已存在"),
-    LOGIN_INVALID(15003,"登陆失败，用户名或密码不正确。");
+    LOGIN_INVALID(15003,"登陆失败，用户名或密码不正确。"),
+    NO_STOCK_EXCEPTION(21000, "没有库存");
 
     private int code;
     private String msg;

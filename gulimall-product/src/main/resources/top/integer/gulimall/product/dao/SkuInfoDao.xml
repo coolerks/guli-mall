@@ -17,6 +17,37 @@
         <result property="price" column="price"/>
         <result property="saleCount" column="sale_count"/>
     </resultMap>
+    <resultMap id="skuInfoFeign" type="top.integer.common.vo.ProductInfoVo">
+        <!-- sku_id 对应 pms_sku_info 表的 sku_id 字段 -->
+        <id property="skuId" column="sku_id" />
+        <!-- spu_id 对应 pms_sku_info 表的 spu_id 字段 -->
+        <result property="spuId" column="spu_id" />
+        <!-- spu_name 对应 pms_spu_info 表的 spu_name 字段 -->
+        <result property="spuName" column="spu_name" />
+        <!-- catalog_id 对应 pms_spu_info 表的 catalog_id 字段 -->
+        <result property="catalogId" column="catalog_id" />
+        <!-- spu_brand 对应 pms_brand 表的 name 字段 -->
+        <result property="spuBrand" column="spu_brand" />
+        <!-- spu_pic 对应 pms_spu_images 表的 img_url 字段 -->
+        <result property="spuPic" column="spu_pic" />
+    </resultMap>
+    <select id="getSpuInfoBySkuIds" resultMap="skuInfoFeign">
+        select ki.sku_id sku_id,
+        ki.spu_id spu_id,
+        pi.spu_name spu_name,
+        pi.catalog_id catalog_id,
+        pb.name spu_brand,
+        group_concat(psi.img_url) spu_pic
+        from pms_sku_info ki
+        join pms_spu_info pi on ki.spu_id = pi.id
+        join pms_brand pb on ki.brand_id = pb.brand_id
+        join pms_spu_images psi on ki.spu_id = psi.spu_id
+        where ki.sku_id in
+        <foreach collection="ids" open="(" item="item" separator="," close=")">
+            #{item}
+        </foreach>
+        group by ki.sku_id
+    </select>
 
 
 </mapper>

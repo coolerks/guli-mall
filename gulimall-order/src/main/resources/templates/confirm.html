@@ -567,19 +567,19 @@
 				<h5>商家：谷粒学院自营</h5>
 				<div><button>换购</button><span>已购满20.00元，再加49.90元，可返回购物车领取赠品</span></div>
 				<!--图片-->
-				<div class="yun1">
-					<img src="static/order/confirm/img/im_03.png" class="yun"/>
-					<div class="mi">
-						<p>小米（MI）小米手环2 智能运动 心率检测 来 <span style="color: red;"> ￥ 149.00</span> <span> x1 </span> <span>有货</span></p>
-						<p>电提醒 久坐提醒 LED显示器 时间显示 防水记 <span>0.095kg</span></p>
-						<p class="tui-1"><img src="static/order/confirm/img/i_07.png" />支持7天无理由退货</p>
-					</div>
-				</div>
+<!--				<div class="yun1">-->
+<!--					<img src="static/order/confirm/img/im_03.png" class="yun"/>-->
+<!--					<div class="mi">-->
+<!--						<p>小米（MI）小米手环2 智能运动 心率检测 来 <span style="color: red;"> ￥ 149.00</span> <span> x1 </span> <span>有货</span></p>-->
+<!--						<p>电提醒 久坐提醒 LED显示器 时间显示 防水记 <span>0.095kg</span></p>-->
+<!--						<p class="tui-1"><img src="static/order/confirm/img/i_07.png" />支持7天无理由退货</p>-->
+<!--					</div>-->
+<!--				</div>-->
 
 				<div class="yun1" th:each="item:${orderConfirm.getItems()}">
 					<img th:src="${item.getImage()}" class="yun"/>
 					<div class="mi">
-						<p>[[${item.getTitle()}]]<span style="color: red;"> ￥ [[${item.getPrice()}]]</span> <span> x[[${item.getCount()}]] </span> <span>有货</span></p>
+						<p>[[${item.getTitle()}]]<span style="color: red;"> ￥ [[${item.getPrice()}]]</span> <span> x[[${item.getCount()}]] </span> <span>[[${item.hasStock ? '有货' : '无货'}]]</span></p>
 						<p><span>0.095kg</span></p>
 						<p class="tui-1"><img src="static/order/confirm/img/i_07.png" />支持7天无理由退货</p>
 					</div>
@@ -643,9 +643,16 @@
 
 			<div class="yfze">
 				<p class="yfze_a"><span class="z">应付总额：</span><span class="hq">￥[[${orderConfirm.getTotal()}]]</span></p>
-				<p class="yfze_b">寄送至： 北京 朝阳区 三环到四环之间 朝阳北路复兴国际大厦23层麦田房产 IT-中心研发二部 收货人：赵存权 188****5052</p>
+
+				<p class="yfze_b">寄送至： [[${orderConfirm.DefaultAddress.getProvince()}]] [[${orderConfirm.DefaultAddress.getCity()}]] [[${orderConfirm.DefaultAddress.getRegion()}]]  [[${orderConfirm.DefaultAddress.getDetailAddress()}]]  收货人：[[${orderConfirm.DefaultAddress.getName()}]] [[${orderConfirm.DefaultAddress.getPhone()}]]</p>
 			</div>
-			<button class="tijiao">提交订单</button>
+			<form action="http://order.gulimall.com/submitOrder" method="post">
+				<input type="hidden" name="addrId" th:value="${orderConfirm.getDefaultAddress().getId()}">
+				<input type="hidden" name="payPrice" th:value="${orderConfirm.getTotal()}">
+				<input type="hidden" name="orderToken" th:value="${orderConfirm.getOrderToken()}">
+				<button class="tijiao">提交订单</button>
+			</form>
+
 		</div>
 		</div>
 

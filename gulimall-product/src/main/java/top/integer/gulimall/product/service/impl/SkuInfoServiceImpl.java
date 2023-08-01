@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.Query;
+import top.integer.common.vo.ProductInfoVo;
 import top.integer.gulimall.product.dao.SkuInfoDao;
 import top.integer.gulimall.product.entity.SkuImagesEntity;
 import top.integer.gulimall.product.entity.SkuInfoEntity;
 import top.integer.gulimall.product.entity.SpuInfoDescEntity;
+import top.integer.gulimall.product.entity.SpuInfoEntity;
 import top.integer.gulimall.product.service.*;
 import top.integer.gulimall.product.vo.SkuItemVo;
 
@@ -123,6 +125,18 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
                 )
                 .stream()
                 .collect(Collectors.toMap(SkuInfoEntity::getSkuId, SkuInfoEntity::getPrice));
+    }
+
+    @Override
+    public Map<Long, ProductInfoVo> getSpuInfoBySkuIds(List<Long> ids) {
+        List<ProductInfoVo> result = baseMapper.getSpuInfoBySkuIds(ids.stream().distinct().toList());
+        result.forEach(it -> {
+            String spuPic = it.getSpuPic();
+            String[] split = spuPic.split(",");
+            it.setSpuPic(split[0]);
+        });
+        return result.stream()
+                .collect(Collectors.toMap(ProductInfoVo::getSkuId, it -> it));
     }
 
 }

@@ -15,6 +15,11 @@ public class OrderConfirmVo {
     private List<MemberAddressVo> address;
 
     /**
+     * 默认的收货地址
+     */
+    private MemberAddressVo defaultAddress;
+
+    /**
      * 选中的购物项
      */
     private List<OrderItemVo> items;
@@ -34,8 +39,14 @@ public class OrderConfirmVo {
      */
     private BigDecimal payPrice;
 
+    /**
+     * 防重令牌
+     */
     private String orderToken;
 
+    /**
+     * 总的商品个数
+     */
     private Integer count;
 
 

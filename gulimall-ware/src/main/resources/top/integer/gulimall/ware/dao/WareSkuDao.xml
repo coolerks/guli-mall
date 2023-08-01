@@ -18,6 +18,28 @@
         where sku_id = #{skuId}
           and ware_id = #{wareId}
     </insert>
+    <update id="lockStock">
+        update wms_ware_sku
+        set stock        = stock - #{stock},
+            stock_locked = stock_locked + #{stock}
+        where id = #{id}
+          and (stock - stock_locked) >= #{stock}
+    </update>
+    <resultMap id="listStockMap" type="top.integer.gulimall.ware.vo.StockVo">
+        <id column="sku_id" property="skuId" />
+        <collection property="wares" ofType="top.integer.gulimall.ware.vo.StockVo$Ware">
+            <result property="id" column="id" />
+            <result property="stock" column="stock" />
+        </collection>
+    </resultMap>
+    <select id="listStock" resultMap="listStockMap">
+        select sku_id, id, (stock - stock_locked) stock
+        from wms_ware_sku
+        where sku_id in
+        <foreach collection="list" open="(" item="item" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
 
 
 </mapper>

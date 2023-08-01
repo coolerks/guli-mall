@@ -8,7 +8,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import top.integer.common.vo.ProductInfoVo;
 import top.integer.gulimall.product.entity.SkuInfoEntity;
+import top.integer.gulimall.product.entity.SpuInfoEntity;
 import top.integer.gulimall.product.service.SkuInfoService;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.R;
@@ -31,6 +33,11 @@ public class SkuInfoController {
     @PostMapping("/price")
     public Map<Long, BigDecimal> getPrice(@RequestBody List<Long> ids) {
         return skuInfoService.getPrice(ids);
+    }
+
+    @PostMapping("/skuId")
+    public Map<Long, ProductInfoVo> getSpuInfoBySkuIds(@RequestBody List<Long> ids) {
+        return skuInfoService.getSpuInfoBySkuIds(ids);
     }
 
     /**

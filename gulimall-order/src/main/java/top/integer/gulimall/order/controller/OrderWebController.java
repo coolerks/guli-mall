@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import top.integer.gulimall.order.service.OrderService;
 import top.integer.gulimall.order.vo.OrderConfirmVo;
+import top.integer.gulimall.order.vo.OrderSubmitVo;
+import top.integer.gulimall.order.vo.SubmitOrderResponseVo;
 
 import java.util.concurrent.ExecutionException;
 
@@ -44,9 +47,22 @@ public class OrderWebController {
     public String toTrade(Model model) throws ExecutionException, InterruptedException {
         OrderConfirmVo orderConfirmVo = orderService.confirmOrder();
         model.addAttribute("orderConfirm", orderConfirmVo);
-        System.out.println("orderConfirmVo = " + orderConfirmVo);
+//        System.out.println("orderConfirmVo = " + orderConfirmVo);
         return "confirm";
     }
 
+    @PostMapping("/submitOrder")
+    public String submitOrder(OrderSubmitVo vo, Model model) throws ExecutionException, InterruptedException {
+        try {
+            SubmitOrderResponseVo responseVo = orderService.submitOrder(vo);
+            if (responseVo.getCode() != 0) {
+                return "redirect:http://order.gulimall.com/toTrade";
+            }
+            model.addAttribute("submitOrder", responseVo);
+        } catch (RuntimeException e) {
+            return "redirect:http://order.gulimall.com/toTrade";
+        }
+        return "pay";
+    }
 
 }

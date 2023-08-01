@@ -17,6 +17,7 @@ public class OrderItemVo {
     private BigDecimal price;
     private Integer count;
     private BigDecimal totalPrice;
+    private Boolean hasStock;
 
     public BigDecimal getTotalPrice() {
         return price.multiply(new BigDecimal(count));

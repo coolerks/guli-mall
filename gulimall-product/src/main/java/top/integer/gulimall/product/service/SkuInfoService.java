@@ -2,7 +2,9 @@ package top.integer.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.integer.common.utils.PageUtils;
+import top.integer.common.vo.ProductInfoVo;
 import top.integer.gulimall.product.entity.SkuInfoEntity;
+import top.integer.gulimall.product.entity.SpuInfoEntity;
 import top.integer.gulimall.product.vo.SkuItemVo;
 
 import java.math.BigDecimal;
@@ -25,5 +27,7 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
     SkuItemVo item(Long skuId);
 
     Map<Long, BigDecimal> getPrice(List<Long> ids);
+
+    Map<Long, ProductInfoVo> getSpuInfoBySkuIds(List<Long> ids);
 }
 

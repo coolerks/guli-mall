@@ -2,6 +2,7 @@ package top.integer.gulimall.ware.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
+import top.integer.common.to.LockStockTo;
 import top.integer.common.utils.PageUtils;
 import top.integer.gulimall.ware.entity.WareSkuEntity;
 
@@ -22,5 +23,7 @@ public interface WareSkuService extends IService<WareSkuEntity> {
     void addStock(@Param("skuId") Long skuId, @Param("wareId") Long wareId, @Param("skuNum") Integer skuNum);
 
     Map<Long, Boolean> hasStock(List<Long> skuIds);
+
+    boolean orderLockStock(List<LockStockTo> list);
 }
 

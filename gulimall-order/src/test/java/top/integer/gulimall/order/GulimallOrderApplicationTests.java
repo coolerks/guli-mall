@@ -1,17 +1,21 @@
 package top.integer.gulimall.order;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import top.integer.common.utils.R;
+import top.integer.common.vo.ProductInfoVo;
 import top.integer.gulimall.order.entity.OrderEntity;
 import top.integer.gulimall.order.entity.OrderReturnReasonEntity;
 import top.integer.gulimall.order.feign.CartFeign;
 import top.integer.gulimall.order.feign.MemberAddressFeign;
 import top.integer.gulimall.order.feign.SkuInfoFeign;
+import top.integer.gulimall.order.feign.WmsFeign;
 import top.integer.gulimall.order.vo.MemberAddressVo;
 import top.integer.gulimall.order.vo.OrderItemVo;
 
@@ -40,10 +44,28 @@ class GulimallOrderApplicationTests {
     @Autowired
     SkuInfoFeign skuInfoFeign;
 
+    @Autowired
+    WmsFeign wmsFeign;
+
+
     @Test
     void price() {
         Map<Long, BigDecimal> skusPrice = skuInfoFeign.getSkusPrice(List.of(6L, 15L));
         System.out.println("skusPrice = " + skusPrice);
+    }
+
+    @Test
+    void spuInfo() {
+        Map<Long, ProductInfoVo> spuInfoBySkuIds = skuInfoFeign.getSpuInfoBySkuIds(List.of(67L, 68L, 70L));
+        System.out.println("spuInfoBySkuIds = " + spuInfoBySkuIds);
+    }
+
+    @Test
+    void hasStock() {
+        R r = wmsFeign.hasStock(List.of(9L, 45L));
+        Map<Long, Boolean> data = r.getData(new TypeReference<Map<Long, Boolean>>() {
+        });
+        System.out.println("data = " + data);
     }
 
     @Test
