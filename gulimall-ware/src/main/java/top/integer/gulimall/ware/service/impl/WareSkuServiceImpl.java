@@ -2,6 +2,8 @@ package top.integer.gulimall.ware.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 import top.integer.common.to.LockStockTo;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.Query;
@@ -25,12 +28,16 @@ import top.integer.gulimall.ware.feign.ProductFeign;
 import top.integer.gulimall.ware.service.WareSkuService;
 import top.integer.gulimall.ware.vo.StockVo;
 
+import javax.sql.DataSource;
+
 
 @Service("wareSkuService")
 @Slf4j
 public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> implements WareSkuService {
     @Autowired
     private ProductFeign productFeign;
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -82,7 +89,11 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     }
 
     @Override
+    @Transactional
     public boolean orderLockStock(List<LockStockTo> list) {
+        System.out.println("RootContext.getXID() = " + RootContext.getXID());
+        System.out.println("dataSource = " + dataSource);
+
         List<StockVo> stockVos = baseMapper.listStock(list.stream().map(LockStockTo::getSkuId).toList());
         stockVos.forEach(it -> it.getWares().sort((a, b) -> b.getStock().compareTo(a.getStock())));
         Map<Long, Integer> stockMap = list.stream().collect(Collectors.toMap(LockStockTo::getSkuId, LockStockTo::getStock));

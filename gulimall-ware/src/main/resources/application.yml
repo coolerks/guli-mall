@@ -22,3 +22,23 @@ mybatis-plus:
 logging:
   level:
     top.integer.gulimall.ware.dao: debug
+seata:
+  tx-service-group: default-tx-group # 需要保证与第19行内容一致
+  enabled: true
+  enable-auto-data-source-proxy: true
+  config:
+    type: nacos
+    nacos:
+      namespace: 985210a8-5dd3-40c3-97b1-68541dd902ef # 需要手动创建一个命名空间，不能使用public
+      server-addr: 127.0.0.1:8848
+      group: "DEFAULT_GROUP"
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: 127.0.0.1:8848
+      group: "DEFAULT_GROUP"
+      namespace: 985210a8-5dd3-40c3-97b1-68541dd902ef # 需要手动创建一个命名空间，不能使用public
+  service:
+    vgroupMapping:
+      default-tx-group: default # 键需要保证与第2的值一致

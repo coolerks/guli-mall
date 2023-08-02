@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -32,6 +35,7 @@ import top.integer.gulimall.order.service.OrderItemService;
 import top.integer.gulimall.order.service.OrderService;
 import top.integer.gulimall.order.vo.*;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -70,6 +74,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 return 0
             end
             """;
+
+    @Autowired
+    private DataSource dataSource;
+
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -129,12 +137,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
-    @Transactional(rollbackFor = Throwable.class)
+    @GlobalTransactional
+    @Transactional
     public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) throws ExecutionException, InterruptedException {
         orderSubmitVoThreadLocal.set(vo);
         Long userId = OrderInterceptor.loginUser.get().getUserId();
         SubmitOrderResponseVo responseVo = new SubmitOrderResponseVo();
-
         // 验证令牌
         Long result = Optional.ofNullable(template.execute(new DefaultRedisScript<>(SCRIPT, Long.class),
                         List.of(OrderConstant.USER_ORDER_TOKEN_PREFIX + userId), vo.getOrderToken()))
@@ -145,8 +153,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }
 
         OrderCreateTo order = createOrder();
+        System.out.println("RootContext.getXID() = " + RootContext.getXID());
+        System.out.println("dataSource = " + dataSource);
 
-        System.out.println("order = " + order);
+//        System.out.println("order = " + order);
 
         // 验价失败
         if (!order.getOrder().getPayAmount().equals(vo.getPayPrice())) {
@@ -163,6 +173,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             responseVo.setCode(2);
             throw new RuntimeException("库存不足");
         }
+//        int a = 1 / 0;
         orderSubmitVoThreadLocal.remove();
         responseVo.setOrder(order.getOrder());
         return responseVo;
