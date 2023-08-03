@@ -1,5 +1,6 @@
 package top.integer.gulimall.order.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -7,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -16,11 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import top.integer.common.to.LockStockTo;
+import top.integer.common.to.mq.OrderCloseTo;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.Query;
 import top.integer.common.utils.R;
 import top.integer.common.vo.ProductInfoVo;
 import top.integer.common.vo.UserInfo;
+import top.integer.common.vo.WareSkuLockVo;
 import top.integer.gulimall.order.constant.OrderConstant;
 import top.integer.gulimall.order.dao.OrderDao;
 import top.integer.gulimall.order.entity.OrderEntity;
@@ -63,6 +67,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Autowired
     private WmsFeign wmsFeign;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private StringRedisTemplate template;
@@ -137,7 +144,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     }
 
     @Override
-    @GlobalTransactional
+//    @GlobalTransactional
     @Transactional
     public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) throws ExecutionException, InterruptedException {
         orderSubmitVoThreadLocal.set(vo);
@@ -153,8 +160,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         }
 
         OrderCreateTo order = createOrder();
-        System.out.println("RootContext.getXID() = " + RootContext.getXID());
-        System.out.println("dataSource = " + dataSource);
+//        System.out.println("RootContext.getXID() = " + RootContext.getXID());
+//        System.out.println("dataSource = " + dataSource);
 
 //        System.out.println("order = " + order);
 
@@ -168,15 +175,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         orderItemService.saveBatch(order.getOrderItems());
         List<LockStockTo> lockStockList = order.getOrderItems().stream()
                 .map(it -> new LockStockTo(it.getSkuId(), it.getSkuQuantity())).toList();
-        R r = wmsFeign.orderLockStock(lockStockList);
+        R r = wmsFeign.orderLockStock(new WareSkuLockVo(lockStockList, order.getOrder().getOrderSn()));
         if (r.getCode() != 0) {
             responseVo.setCode(2);
             throw new RuntimeException("库存不足");
         }
-//        int a = 1 / 0;
         orderSubmitVoThreadLocal.remove();
+
         responseVo.setOrder(order.getOrder());
+        OrderCloseTo orderCloseTo = new OrderCloseTo();
+        orderCloseTo.setId(order.getOrder().getId());
+        orderCloseTo.setSn(order.getOrder().getOrderSn());
+        rabbitTemplate.convertAndSend("order-event-exchange", "order.create.queue", orderCloseTo);
         return responseVo;
+    }
+
+    @Override
+    public OrderEntity getOrderInfo(String orderSn) {
+        return this.getOne(new LambdaQueryWrapper<OrderEntity>().eq(OrderEntity::getOrderSn, orderSn));
     }
 
 

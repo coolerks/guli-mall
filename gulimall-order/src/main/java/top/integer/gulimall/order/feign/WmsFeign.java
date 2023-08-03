@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import top.integer.common.to.LockStockTo;
 import top.integer.common.utils.R;
+import top.integer.common.vo.WareSkuLockVo;
 
 import java.util.List;
 
@@ -16,5 +17,5 @@ public interface WmsFeign {
     R hasStock(@RequestBody List<Long> skuIds);
 
     @PostMapping("/ware/waresku/lock/order")
-    R orderLockStock(@RequestBody List<LockStockTo> list);
+    R orderLockStock(@RequestBody WareSkuLockVo wareSkuLockVo);
 }

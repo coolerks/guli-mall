@@ -6,6 +6,7 @@ import top.integer.common.exception.BizCodeEnume;
 import top.integer.common.to.LockStockTo;
 import top.integer.common.utils.PageUtils;
 import top.integer.common.utils.R;
+import top.integer.common.vo.WareSkuLockVo;
 import top.integer.gulimall.ware.entity.WareSkuEntity;
 import top.integer.gulimall.ware.service.WareSkuService;
 
@@ -28,9 +29,9 @@ public class WareSkuController {
     private WareSkuService wareSkuService;
 
     @PostMapping("/lock/order")
-    public R orderLockStock(@RequestBody List<LockStockTo> list) {
+    public R orderLockStock(@RequestBody WareSkuLockVo wareSkuLockVo) {
         try {
-            if (wareSkuService.orderLockStock(list)) {
+            if (wareSkuService.orderLockStock(wareSkuLockVo)) {
                 return R.ok();
             }
         } catch (RuntimeException e) {

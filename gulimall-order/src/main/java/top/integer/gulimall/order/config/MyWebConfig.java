@@ -13,6 +13,6 @@ public class MyWebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(orderInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(orderInterceptor).addPathPatterns("/**").excludePathPatterns("/order/order/infos/order/**");
     }
 }
