@@ -5,6 +5,7 @@ import top.integer.common.utils.PageUtils;
 import top.integer.gulimall.order.entity.OrderEntity;
 import top.integer.gulimall.order.vo.OrderConfirmVo;
 import top.integer.gulimall.order.vo.OrderSubmitVo;
+import top.integer.gulimall.order.vo.PayVo;
 import top.integer.gulimall.order.vo.SubmitOrderResponseVo;
 
 import java.util.Map;
@@ -26,5 +27,11 @@ public interface OrderService extends IService<OrderEntity> {
     SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) throws ExecutionException, InterruptedException;
 
     OrderEntity getOrderInfo(String orderSn);
+
+    PayVo getOrderPay(String orderSn);
+
+    void orderPaid(String orderSn);
+
+    void updateOrderPayedStatus(String outTradeNo, Integer code);
 }
 

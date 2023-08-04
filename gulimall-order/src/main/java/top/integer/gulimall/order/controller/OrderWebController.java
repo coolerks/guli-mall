@@ -30,7 +30,9 @@ public class OrderWebController {
     }
 
     @GetMapping("/list.html")
-    public String page3() {
+    public String orderList() {
+//        System.out.println("orderSn = " + orderSn);
+//        orderService.orderPaid(orderSn);
         return "list";
     }
 

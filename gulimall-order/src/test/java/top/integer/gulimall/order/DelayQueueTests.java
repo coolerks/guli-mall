@@ -77,4 +77,5 @@ public class DelayQueueTests {
             template.convertAndSend("order-event-exchange", "order.create.queue", message);
         }
     }
+
 }

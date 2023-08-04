@@ -2,6 +2,7 @@ package top.integer.gulimall.order.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,6 +42,7 @@ import top.integer.gulimall.order.vo.*;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -193,6 +195,43 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     @Override
     public OrderEntity getOrderInfo(String orderSn) {
         return this.getOne(new LambdaQueryWrapper<OrderEntity>().eq(OrderEntity::getOrderSn, orderSn));
+    }
+
+    @Override
+    public PayVo getOrderPay(String orderSn) {
+        OrderEntity orderInfo = getOrderInfo(orderSn);
+
+        PayVo pay = new PayVo();
+        // 订单备注
+        pay.setBody("这是备注信息。。。。。。");
+        // 订单标题
+        pay.setSubject("谷粒商城支付");
+        // 订单号
+        pay.setOut_trade_no(orderInfo.getOrderSn());
+        pay.setTotal_amount(orderInfo.getPayAmount().setScale(2, RoundingMode.UP).toString());
+
+        return pay;
+    }
+
+    @Override
+    public void orderPaid(String orderSn) {
+        OrderEntity orderInfo = getOrderInfo(orderSn);
+        if (OrderStatusEnum.CREATE_NEW.getCode().equals(orderInfo.getStatus())) {
+            LambdaUpdateWrapper<OrderEntity> updateWrapper = new LambdaUpdateWrapper<>();
+            updateWrapper.set(OrderEntity::getStatus, OrderStatusEnum.PAYED.getCode());
+            this.update(updateWrapper);
+        }
+    }
+
+    @Override
+    public void updateOrderPayedStatus(String outTradeNo, Integer code) {
+        OrderEntity order = getOrderInfo(outTradeNo);
+        if (OrderStatusEnum.CREATE_NEW.getCode().equals(order.getStatus())) {
+            LambdaUpdateWrapper<OrderEntity> updateWrapper = new LambdaUpdateWrapper<>();
+            updateWrapper.set(OrderEntity::getStatus, code)
+                    .eq(OrderEntity::getOrderSn, outTradeNo);
+            this.update(updateWrapper);
+        }
     }
 
 
