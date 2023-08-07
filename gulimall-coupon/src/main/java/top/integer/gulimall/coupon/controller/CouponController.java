@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.servlet.DispatcherServlet;
 import top.integer.gulimall.coupon.entity.CouponEntity;
 import top.integer.gulimall.coupon.service.CouponService;
 import top.integer.common.utils.PageUtils;
@@ -99,7 +100,6 @@ public class CouponController {
     @RequestMapping("/delete")
     public R delete(@RequestBody Long[] ids){
 		couponService.removeByIds(Arrays.asList(ids));
-
         return R.ok();
     }
 
