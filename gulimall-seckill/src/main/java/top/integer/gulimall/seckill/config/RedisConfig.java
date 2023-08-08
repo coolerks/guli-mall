@@ -1,5 +1,8 @@
 package top.integer.gulimall.seckill.config;
 
+import com.alibaba.csp.sentinel.adapter.spring.webmvc.callback.BlockExceptionHandler;
+import com.alibaba.csp.sentinel.adapter.spring.webmvc.config.SentinelWebMvcConfig;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +12,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 public class RedisConfig {
@@ -36,5 +42,24 @@ public class RedisConfig {
 
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
+    }
+
+
+    @Bean
+    public SentinelWebMvcConfig sentinelWebMvcConfig() {
+        SentinelWebMvcConfig sentinelWebMvcConfig = new SentinelWebMvcConfig();
+        sentinelWebMvcConfig.setBlockExceptionHandler(new BlockExceptionHandler() {
+            @Override
+            public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, BlockException e) throws Exception {
+                httpServletResponse.setHeader("content-type", "application/json");
+                httpServletResponse.getWriter().print("""
+                        {
+                          "code": 500,
+                          "reason": "失败"
+                        }
+                        """);
+            }
+        });
+        return sentinelWebMvcConfig;
     }
 }

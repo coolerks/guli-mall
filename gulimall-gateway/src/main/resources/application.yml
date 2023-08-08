@@ -5,6 +5,10 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: localhost:8858
     gateway:
       routes:
         - id: product_test
@@ -84,3 +88,8 @@ spring:
 
   application:
     name: gulimall-gateway
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

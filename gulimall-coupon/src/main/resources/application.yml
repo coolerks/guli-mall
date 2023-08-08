@@ -5,6 +5,15 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: localhost:8858
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1
   application:
     name: gulimall-coupon
   redis:
@@ -37,3 +46,8 @@ seata:
   service:
     vgroupMapping:
       default-tx-group: default # 键需要保证与第2的值一致
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
